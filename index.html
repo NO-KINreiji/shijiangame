@@ -13,6 +13,7 @@ body {
   padding: 20px;
 }
 
+  
 .container {
   background: white;
   max-width: 450px;
@@ -25,33 +26,44 @@ body {
 
 button {
   width: 100%;
+  
   margin: 10px 0;
   padding: 16px;
   font-size: 18px;
   border-radius: 12px;
+  
   border: none;
   cursor: pointer;
+  
   transition: all 0.2s;
 }
 
+
+
+  
 button:active {
   transform: scale(0.98);
 }
 
 .choice { background: #f3f4f6; }
 .choice:hover { background: #dbeafe; }
+  
 .correct { background: #86efac !important; }
+  
 .wrong { background: #fca5a5 !important; }
 
 .play { background: #3b82f6; color: white; }
 .play.playing { background: #10b981; }
 
 .next {
+  
   background: #6366f1;
   color: white;
   margin-top: 10px;
   display: none;
 }
+
+  
 
 #progress {
   margin: 10px 0;
@@ -65,6 +77,7 @@ button:active {
   word-break: break-word;
 }
 
+  
 #rank {
   font-size: 26px;
   font-weight: bold;
@@ -94,6 +107,7 @@ button:active {
   }
 }
 </style>
+  
 </head>
 
 <body>
@@ -116,7 +130,6 @@ button:active {
   <button id="nextBtn" class="next" onclick="nextQuestion()">⏭ 次の問題</button>
 </div>
 
-<div class="footer">made by reiji</div>
 
 <script>
 const allQuestions = [
@@ -148,8 +161,11 @@ let currentIndex = 0;
 let correctCount = 0;
 let current;
 
+  
 function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
 
+
+  
 function displayText(q){
   return document.getElementById("togglePinyin").checked
     ? `${q.word}（${q.pinyin}）`
@@ -157,8 +173,8 @@ function displayText(q){
 }
 
 function startGame(){
-  quiz = shuffle(allQuestions); // まず全単語1回ずつ
-  quiz.push(allQuestions[Math.floor(Math.random()*allQuestions.length)]); // 10問目は重複
+  quiz = shuffle(allQuestions); // まず全単語1回ずつ重複を許さずにランダムに出題するから
+  quiz.push(allQuestions[Math.floor(Math.random()*allQuestions.length)]); // 10問目は重複だからランダムじゃないじゃん
   currentIndex = 0;
   correctCount = 0;
   showQuestion();
@@ -177,6 +193,7 @@ function showQuestion(){
   });
   document.getElementById("choices").innerHTML = html;
   document.getElementById("result").innerText = "";
+  
   document.getElementById("rank").innerText = "";
   document.getElementById("nextBtn").style.display = "none";
   document.getElementById("playBtn").style.display = "inline-block";
@@ -242,13 +259,14 @@ function showResult(){
     "プロshijian当て職人",
     "レジェンドshijian当てer"
   ];
+  
 
   document.getElementById("result").style.fontSize = "24px";
   document.getElementById("result").innerText = `🎉 遊んでくれてありがとう‼️\n10問中 ${correctCount} 問正解！`;
 
   const rank = document.getElementById("rank");
   rank.innerText = rankNames[correctCount];
-  rank.style.color = "#e91e63"; // 目立つ色
+  rank.style.color = "#e91e63"; // 目立つへんてこな色
   rank.style.fontSize = "28px";
   rank.style.fontWeight = "bold";
 }
