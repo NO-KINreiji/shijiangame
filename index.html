@@ -13,7 +13,73 @@ body {
   padding: 20px;
 }
 
-  
+/* ===== 追加：スタート画面 ===== */
+#startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: bold;
+  animation: wobble 1.5s infinite ease-in-out;
+}
+
+@keyframes wobble {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.startBtn {
+  margin-top: 40px;
+  font-size: 26px;
+  padding: 18px 30px;
+  border-radius: 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.helpBtn {
+  margin-top: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  background: #ddd;
+  border: none;
+}
+
+/* ===== モーダル ===== */
+#modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.modalContent {
+  background: white;
+  max-width: 400px;
+  width: 85%;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.okBtn {
+  margin-top: 15px;
+  padding: 10px 20px;
+}
+
+/* ===== 元のUI ===== */
 .container {
   background: white;
   max-width: 450px;
@@ -22,48 +88,38 @@ body {
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  display: none;
 }
 
 button {
   width: 100%;
-  
   margin: 10px 0;
   padding: 16px;
   font-size: 18px;
   border-radius: 12px;
-  
   border: none;
   cursor: pointer;
-  
   transition: all 0.2s;
 }
 
-
-
-  
 button:active {
   transform: scale(0.98);
 }
 
 .choice { background: #f3f4f6; }
 .choice:hover { background: #dbeafe; }
-  
 .correct { background: #86efac !important; }
-  
 .wrong { background: #fca5a5 !important; }
 
 .play { background: #3b82f6; color: white; }
 .play.playing { background: #10b981; }
 
 .next {
-  
   background: #6366f1;
   color: white;
   margin-top: 10px;
   display: none;
 }
-
-  
 
 #progress {
   margin: 10px 0;
@@ -77,7 +133,6 @@ button:active {
   word-break: break-word;
 }
 
-  
 #rank {
   font-size: 26px;
   font-weight: bold;
@@ -85,33 +140,48 @@ button:active {
   word-break: break-word;
 }
 
-.footer {
-  position: fixed;
-  bottom: 10px;
-  right: 15px;
-  font-size: 12px;
-  color: #888;
+/* ===== ホーム戻るボタン ===== */
+.homeBtn {
+  margin-top: 20px;
+  background: #f59e0b;
+  color: white;
 }
 
-/* スマホ用微調整 */
+/* スマホ調整 */
 @media (max-width: 400px) {
+  .title { font-size: 32px; }
+  .startBtn { font-size: 22px; }
   button {
     font-size: 16px;
     padding: 14px;
   }
-  #result {
-    font-size: 18px;
-  }
-  #rank {
-    font-size: 22px;
-  }
 }
 </style>
-  
 </head>
 
 <body>
 
+<!-- ===== スタート画面 ===== -->
+<div id="startScreen">
+  <div class="title">shijian当てゲーム</div>
+  <button class="startBtn" onclick="startFromMenu()">ゲームスタート</button>
+  <button class="helpBtn" onclick="openModal()">？</button>
+</div>
+
+<!-- ===== モーダル ===== -->
+<div id="modal">
+  <div class="modalContent">
+    <p>
+中国語には同音異義語が山ほどあってそれらを日本人が聞きわけるのはとても難しいです。<br><br>
+そこでこのゲームでは同じスペルだけどイントネーションが全てことなる9つの「shijian」を聞き分けていただきます。<br><br>
+拼音(日本語でいうローマ字)のアルファベットの上についている矢印のような記号はその文字の抑揚を表しているのでヒントになります。<br><br>
+ぜひ頑張ってください❗️
+    </p>
+    <button class="okBtn" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<!-- ===== ゲーム本体 ===== -->
 <div class="container">
   <h2>🎧 shijian当てゲーム</h2>
 
@@ -128,10 +198,30 @@ button:active {
   <p id="result"></p>
   <p id="rank"></p>
   <button id="nextBtn" class="next" onclick="nextQuestion()">⏭ 次の問題</button>
+  <button id="homeBtn" class="homeBtn" onclick="goHome()" style="display:none;">🏠 ホームに戻る</button>
 </div>
 
-
 <script>
+// ===== スタート操作 =====
+function startFromMenu(){
+  document.getElementById("startScreen").style.display = "none";
+  document.querySelector(".container").style.display = "block";
+  startGame();
+}
+
+function goHome(){
+  location.reload();
+}
+
+// ===== モーダル =====
+function openModal(){
+  document.getElementById("modal").style.display = "block";
+}
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+
+// ===== 元のコードそのまま =====
 const allQuestions = [
   { word: "事件", pinyin: "shìjiàn" },
   { word: "时间", pinyin: "shíjiān" },
@@ -161,11 +251,8 @@ let currentIndex = 0;
 let correctCount = 0;
 let current;
 
-  
 function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
 
-
-  
 function displayText(q){
   return document.getElementById("togglePinyin").checked
     ? `${q.word}（${q.pinyin}）`
@@ -173,8 +260,8 @@ function displayText(q){
 }
 
 function startGame(){
-  quiz = shuffle(allQuestions); // まず全単語1回ずつ重複を許さずにランダムに出題するから
-  quiz.push(allQuestions[Math.floor(Math.random()*allQuestions.length)]); // 10問目は重複だからランダムじゃないじゃん
+  quiz = shuffle(allQuestions);
+  quiz.push(allQuestions[Math.floor(Math.random()*allQuestions.length)]);
   currentIndex = 0;
   correctCount = 0;
   showQuestion();
@@ -193,7 +280,6 @@ function showQuestion(){
   });
   document.getElementById("choices").innerHTML = html;
   document.getElementById("result").innerText = "";
-  
   document.getElementById("rank").innerText = "";
   document.getElementById("nextBtn").style.display = "none";
   document.getElementById("playBtn").style.display = "inline-block";
@@ -245,6 +331,7 @@ function showResult(){
   document.getElementById("playBtn").style.display = "none";
   document.getElementById("progress").innerText = "";
   document.getElementById("toggleContainer").style.display = "none";
+  document.getElementById("homeBtn").style.display = "block";
 
   const rankNames = [
     "ひよっこshijianプレイヤー",
@@ -259,19 +346,16 @@ function showResult(){
     "プロshijian当て職人",
     "レジェンドshijian当てer"
   ];
-  
 
   document.getElementById("result").style.fontSize = "24px";
   document.getElementById("result").innerText = `🎉 遊んでくれてありがとう‼️\n10問中 ${correctCount} 問正解！`;
 
   const rank = document.getElementById("rank");
   rank.innerText = rankNames[correctCount];
-  rank.style.color = "#e91e63"; // 目立つへんてこな色
+  rank.style.color = "#e91e63";
   rank.style.fontSize = "28px";
   rank.style.fontWeight = "bold";
 }
-
-startGame();
 </script>
 
 </body>
