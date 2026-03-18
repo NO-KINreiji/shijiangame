@@ -197,6 +197,57 @@ button:active {
   50%  { transform: rotate(180deg) scale(1.5); }
   100% { transform: rotate(360deg) scale(1); }
 }
+
+  /* ===== フルスクリーンリザルト ===== */
+#resultScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background: linear-gradient(135deg, #111, #1e293b);
+  color: white;
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.resultContent {
+  width: 90%;
+  max-width: 700px;
+  animation: fadeIn 0.6s ease;
+}
+
+#finalScore {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: clamp(40px, 10vw, 90px);
+}
+
+#finalRank {
+  margin-bottom: 30px;
+  color: gold;
+  font-weight: bold;
+  font-size: clamp(28px, 7vw, 60px);
+}
+
+.bigHomeBtn {
+  padding: 18px 30px;
+  font-size: clamp(18px, 4vw, 28px);
+  border-radius: 16px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
   
 </style>
 </head>
@@ -241,6 +292,15 @@ button:active {
   <p id="rank"></p>
   <button id="nextBtn" class="next" onclick="nextQuestion()">⏭ 次の問題</button>
   <button id="homeBtn" class="homeBtn" onclick="goHome()" style="display:none;">🏠 ホームに戻る</button>
+</div>
+
+  <!-- ===== フルスクリーンリザルト ===== -->
+<div id="resultScreen" style="display:none;">
+  <div class="resultContent">
+    <div id="finalScore"></div>
+    <div id="finalRank"></div>
+    <button onclick="goHome()" class="bigHomeBtn">🏠 もう一回遊ぶ</button>
+  </div>
 </div>
 
 <script>
@@ -368,12 +428,16 @@ function checkAnswer(button, selected){
 function nextQuestion(){ showQuestion(); }
 
 function showResult(){
-  document.getElementById("choices").innerHTML = "";
-  document.getElementById("nextBtn").style.display = "none";
-  document.getElementById("playBtn").style.display = "none";
-  document.getElementById("progress").innerText = "";
-  document.getElementById("toggleContainer").style.display = "none";
-  document.getElementById("homeBtn").style.display = "block";
+
+  // ゲーム画面を消す
+  document.querySelector(".container").style.display = "none";
+
+  // 結果画面を表示
+  const resultScreen = document.getElementById("resultScreen");
+  const score = document.getElementById("finalScore");
+  const rank = document.getElementById("finalRank");
+
+  resultScreen.style.display = "flex";
 
   const rankNames = [
     "ひよっこshijianプレイヤー",
@@ -389,46 +453,35 @@ function showResult(){
     "レジェンドshijian当てer"
   ];
 
-  document.getElementById("result").style.fontSize = "24px";
-  document.getElementById("result").innerText = `🎉 遊んでくれてありがとう‼️\n10問中 ${correctCount} 問正解！`;
-
-  const rank = document.getElementById("rank");
+  score.innerHTML = `🎯 ${correctCount} / 10`;
   rank.innerText = rankNames[correctCount];
-  rank.style.color = "#e91e63";
-  rank.style.fontSize = "28px";
-  rank.style.fontWeight = "bold";
 
-  // ===== 10点のときだけ特殊演出 =====
-if(correctCount === 10){
+  // ===== 10点のときだけ演出 =====
+  if(correctCount === 10){
 
-  // 95% or 5% 抽選
-  if(Math.random() < 0.95){
+    if(Math.random() < 0.95){
 
-    // 🎉 紙吹雪
-    for(let i=0;i<100;i++){
-      let confetti = document.createElement("div");
-      confetti.className = "confetti";
-      confetti.style.left = Math.random()*100 + "vw";
-      confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
-      confetti.style.animationDuration = (Math.random()*2+2)+"s";
-      document.body.appendChild(confetti);
+      // 紙吹雪
+      for(let i=0;i<100;i++){
+        let confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random()*100 + "vw";
+        confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
+        confetti.style.animationDuration = (Math.random()*2+2)+"s";
+        document.body.appendChild(confetti);
 
-      setTimeout(()=>confetti.remove(),4000);
+        setTimeout(()=>confetti.remove(),4000);
+      }
+
+    } else {
+
+      // レア演出
+      document.body.classList.add("rainbow");
+      rank.classList.add("spinCrazy");
+      rank.innerText = "👑 レジェンドshijian当てer 👑";
+
     }
-
-  } else {
-
-    // 🌈 MEMZレア演出
-    document.body.classList.add("rainbow");
-
-    const rank = document.getElementById("rank");
-
-    rank.innerText = "👑 レジェンドshijian当てer 👑";
-    rank.style.fontSize = "40px";
-    rank.classList.add("spinCrazy");
-
   }
-}
 }
 </script>
 
