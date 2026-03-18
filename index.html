@@ -156,6 +156,48 @@ button:active {
     padding: 14px;
   }
 }
+
+  /* ===== 紙吹雪 ===== */
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+
+/* ===== MEMZ風 ===== */
+.rainbow {
+  animation: rainbowBG 0.5s linear infinite;
+}
+
+@keyframes rainbowBG {
+  0% { background: red; }
+  20% { background: orange; }
+  40% { background: yellow; }
+  60% { background: green; }
+  80% { background: blue; }
+  100% { background: purple; }
+}
+
+/* 回転＋拡大縮小 */
+.spinCrazy {
+  display: inline-block;
+  animation: spinScale 1s infinite linear;
+}
+
+@keyframes spinScale {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.5); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+  
 </style>
 </head>
 
@@ -355,6 +397,38 @@ function showResult(){
   rank.style.color = "#e91e63";
   rank.style.fontSize = "28px";
   rank.style.fontWeight = "bold";
+
+  // ===== 10点のときだけ特殊演出 =====
+if(correctCount === 10){
+
+  // 95% or 5% 抽選
+  if(Math.random() < 0.95){
+
+    // 🎉 紙吹雪
+    for(let i=0;i<100;i++){
+      let confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.style.left = Math.random()*100 + "vw";
+      confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
+      confetti.style.animationDuration = (Math.random()*2+2)+"s";
+      document.body.appendChild(confetti);
+
+      setTimeout(()=>confetti.remove(),4000);
+    }
+
+  } else {
+
+    // 🌈 MEMZレア演出
+    document.body.classList.add("rainbow");
+
+    const rank = document.getElementById("rank");
+
+    rank.innerText = "👑 レジェンドshijian当てer 👑";
+    rank.style.fontSize = "40px";
+    rank.classList.add("spinCrazy");
+
+  }
+}
 }
 </script>
 
