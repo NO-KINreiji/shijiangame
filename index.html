@@ -13,7 +13,7 @@ body {
   padding: 20px;
 }
 
-/* ===== 追加：スタート画面 ===== */
+/* ===== 気が向いたからスタート画面をつくった===== */
 #startScreen {
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ body {
   padding: 10px 20px;
 }
 
-/* ===== 元のUI ===== */
+/* ===== 旧UI ===== */
 .container {
   background: white;
   max-width: 450px;
@@ -140,14 +140,14 @@ button:active {
   word-break: break-word;
 }
 
-/* ===== ホーム戻るボタン ===== */
+/* ===== ホーム戻ろうのボタン ===== */
 .homeBtn {
   margin-top: 20px;
   background: #f59e0b;
   color: white;
 }
 
-/* スマホ調整 */
+/* スマホ用のUI調整めんどい */
 @media (max-width: 400px) {
   .title { font-size: 32px; }
   .startBtn { font-size: 22px; }
@@ -168,7 +168,7 @@ button:active {
   <button class="helpBtn" onclick="openModal()">？</button>
 </div>
 
-<!-- ===== モーダル ===== -->
+<!-- ===== クソゲー説明 ===== -->
 <div id="modal">
   <div class="modalContent">
     <p>
@@ -221,7 +221,7 @@ function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
 
-// ===== 元のコードそのまま =====
+// ===== shijian地獄 =====
 const allQuestions = [
   { word: "事件", pinyin: "shìjiàn" },
   { word: "时间", pinyin: "shíjiān" },
