@@ -157,7 +157,7 @@ button:active {
   }
 }
 
-  /* ===== 紙吹雪 ===== */
+  /* ===== 紙吹雪のやつ ===== */
 .confetti {
   position: fixed;
   z-index: 10000;
@@ -173,7 +173,7 @@ button:active {
   }
 }
 
-/* ===== MEMZ風 ===== */
+/* ===== MEMZ風演出 ===== */
 .rainbow {
   animation: rainbowBG 0.5s linear infinite;
 }
@@ -199,7 +199,7 @@ button:active {
   100% { transform: rotate(360deg) scale(1); }
 }
 
-  /* ===== フルスクリーンリザルト ===== */
+  /* ===== フルスクリーンのリザルト ===== */
 #resultScreen {
   position: fixed;
   top: 0;
@@ -464,11 +464,11 @@ function showResult(){
 
       // 紙吹雪
      
-let bursts = 5; // ←回数（増やすと豪華）
+let bursts = 5; 
 
 for(let b=0; b<bursts; b++){
   setTimeout(()=>{
-    for(let i=0;i<80;i++){ // ←1回あたりの量
+    for(let i=0;i<80;i++){ 
       let confetti = document.createElement("div");
       confetti.className = "confetti";
 
@@ -491,7 +491,7 @@ for(let b=0; b<bursts; b++){
 }
     } else {
 
-      // レア演出
+      // あたおかレア演出
       document.body.classList.add("rainbow");
       rank.classList.add("spinCrazy");
       rank.innerText = "👑 レジェンドshijian当てer 👑";
