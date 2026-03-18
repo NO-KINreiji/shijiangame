@@ -462,17 +462,32 @@ function showResult(){
     if(Math.random() < 0.95){
 
       // 紙吹雪
-      for(let i=0;i<100;i++){
-        let confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random()*100 + "vw";
-        confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
-        confetti.style.animationDuration = (Math.random()*2+2)+"s";
-        document.body.appendChild(confetti);
+     
+let bursts = 5; // ←回数（増やすと豪華）
 
-        setTimeout(()=>confetti.remove(),4000);
-      }
+for(let b=0; b<bursts; b++){
+  setTimeout(()=>{
+    for(let i=0;i<80;i++){ // ←1回あたりの量
+      let confetti = document.createElement("div");
+      confetti.className = "confetti";
 
+      confetti.style.left = Math.random()*100 + "vw";
+      confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
+
+      // サイズランダム
+      let size = Math.random()*8 + 4;
+      confetti.style.width = size + "px";
+      confetti.style.height = size + "px";
+
+      // 落ちる速さランダム
+      confetti.style.animationDuration = (Math.random()*3+2)+"s";
+
+      document.body.appendChild(confetti);
+
+      setTimeout(()=>confetti.remove(),4000);
+    }
+  }, b * 200); // ←0.2秒ごとに追加
+}
     } else {
 
       // レア演出
