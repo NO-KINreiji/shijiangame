@@ -13,7 +13,7 @@ body {
   padding: 20px;
 }
 
-/* ===== スタート画面 ===== */
+/* ===== 気が向いたからスタート画面をつくった===== */
 #startScreen {
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ body {
   padding: 10px 20px;
 }
 
-/* ===== ゲーム本体 ===== */
+/* ===== 旧UI ===== */
 .container {
   background: white;
   max-width: 450px;
@@ -99,95 +99,151 @@ button {
   border-radius: 12px;
   border: none;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 .choice { background: #f3f4f6; }
+.choice:hover { background: #dbeafe; }
 .correct { background: #86efac !important; }
 .wrong { background: #fca5a5 !important; }
 
 .play { background: #3b82f6; color: white; }
-.next { background: #6366f1; color: white; display: none; }
+.play.playing { background: #10b981; }
 
-#progress { font-weight: bold; }
+.next {
+  background: #6366f1;
+  color: white;
+  margin-top: 10px;
+  display: none;
+}
+
+#progress {
+  margin: 10px 0;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#result {
+  font-size: 20px;
+  margin-top: 10px;
+  word-break: break-word;
+}
 
 #rank {
   font-size: 26px;
   font-weight: bold;
   margin-top: 20px;
+  word-break: break-word;
 }
 
+/* ===== ホーム戻ろうのボタン ===== */
 .homeBtn {
   margin-top: 20px;
   background: #f59e0b;
   color: white;
 }
 
-/* ===== 紙吹雪 ===== */
-.confetti {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  top: -10px;
-  animation: fall 3s linear forwards;
-}
-
-@keyframes fall {
-  to { transform: translateY(110vh) rotate(720deg); }
-}
-
-/* ===== MEMZ ===== */
-@keyframes rainbow {
-  0% { background: red; }
-  20% { background: yellow; }
-  40% { background: lime; }
-  60% { background: cyan; }
-  80% { background: blue; }
-  100% { background: magenta; }
-}
-
-.rainbowMode {
-  animation: rainbow 0.2s infinite;
-}
-
-@keyframes spinCrazy {
-  0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(1080deg) scale(1.5); }
-}
-
-.legendSpin {
-  animation: spinCrazy 1s infinite linear;
-  font-size: 40px !important;
+/* スマホ用のUI調整めんどい */
+@media (max-width: 400px) {
+  .title { font-size: 32px; }
+  .startBtn { font-size: 22px; }
+  button {
+    font-size: 16px;
+    padding: 14px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- ===== スタート画面 ===== -->
 <div id="startScreen">
   <div class="title">shijian当てゲーム</div>
   <button class="startBtn" onclick="startFromMenu()">ゲームスタート</button>
+  <button class="helpBtn" onclick="openModal()">？</button>
 </div>
 
+<!-- ===== クソゲー説明 ===== -->
+<div id="modal">
+  <div class="modalContent">
+    <p>
+中国語には同音異義語が山ほどあってそれらを日本人が聞きわけるのはとても難しいです。<br><br>
+そこでこのゲームでは同じスペルだけどイントネーションが全てことなる9つの「shijian」を聞き分けていただきます。<br><br>
+拼音(日本語でいうローマ字)のアルファベットの上についている矢印のような記号はその文字の抑揚を表しているのでヒントになります。<br><br>
+ぜひ頑張ってください❗️
+    </p>
+    <button class="okBtn" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<!-- ===== ゲーム本体 ===== -->
 <div class="container">
+  <h2>🎧 shijian当てゲーム</h2>
+
   <div id="progress"></div>
-  <button id="playBtn" onclick="playAudio()">▶ 音声</button>
+
+  <label id="toggleContainer">
+    <input type="checkbox" id="togglePinyin" onchange="renderChoices()">
+    拼音を表示する
+  </label>
+
+  <button id="playBtn" class="play" onclick="playAudio()">▶ 音声を再生</button>
+
   <div id="choices"></div>
   <p id="result"></p>
   <p id="rank"></p>
-  <button id="nextBtn" onclick="nextQuestion()">次</button>
-  <button id="homeBtn" class="homeBtn" onclick="goHome()" style="display:none;">🏠</button>
+  <button id="nextBtn" class="next" onclick="nextQuestion()">⏭ 次の問題</button>
+  <button id="homeBtn" class="homeBtn" onclick="goHome()" style="display:none;">🏠 ホームに戻る</button>
 </div>
 
 <script>
-// ===== データ =====
+// ===== スタート操作 =====
+function startFromMenu(){
+  document.getElementById("startScreen").style.display = "none";
+  document.querySelector(".container").style.display = "block";
+  startGame();
+}
+
+function goHome(){
+  location.reload();
+}
+
+// ===== モーダル =====
+function openModal(){
+  document.getElementById("modal").style.display = "block";
+}
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+
+// ===== shijian地獄 =====
 const allQuestions = [
   { word: "事件", pinyin: "shìjiàn" },
-  { word: "时间", pinyin: "shíjiān" }
+  { word: "时间", pinyin: "shíjiān" },
+  { word: "实践", pinyin: "shíjiàn" },
+  { word: "世间", pinyin: "shìjiān" },
+  { word: "始建", pinyin: "shǐjiàn" },
+  { word: "使奸", pinyin: "shǐjiān" },
+  { word: "诗笺", pinyin: "shījiān" },
+  { word: "释简", pinyin: "shìjiǎn" },
+  { word: "施建", pinyin: "shījiàn" }
 ];
 
 const audioMap = {
   "事件": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi4jian4.mp3",
-  "时间": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi2jian1.mp3"
+  "时间": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi2jian1.mp3",
+  "实践": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi2jian4.mp3",
+  "世间": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi4jian1.mp3",
+  "始建": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi3jian4.mp3",
+  "使奸": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi3jian1.mp3",
+  "诗笺": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi1jian1.mp3",
+  "释简": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi4jian3.mp3",
+  "施建": "https://raw.githubusercontent.com/NO-KINreiji/shijiangame/refs/heads/main/shi1jian4.mp3"
 };
 
 let quiz = [];
@@ -195,16 +251,17 @@ let currentIndex = 0;
 let correctCount = 0;
 let current;
 
-function startFromMenu(){
-  document.getElementById("startScreen").style.display = "none";
-  document.querySelector(".container").style.display = "block";
-  startGame();
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+function displayText(q){
+  return document.getElementById("togglePinyin").checked
+    ? `${q.word}（${q.pinyin}）`
+    : q.word;
 }
 
-function goHome(){ location.reload(); }
-
 function startGame(){
-  quiz = [...allQuestions];
+  quiz = shuffle(allQuestions);
+  quiz.push(allQuestions[Math.floor(Math.random()*allQuestions.length)]);
   currentIndex = 0;
   correctCount = 0;
   showQuestion();
@@ -214,75 +271,93 @@ function showQuestion(){
   if(currentIndex >= quiz.length){ showResult(); return; }
   current = quiz[currentIndex];
   currentIndex++;
+  document.getElementById("progress").innerText = `問題 ${currentIndex} / 10`;
 
-  document.getElementById("progress").innerText = currentIndex;
-
+  let choices = shuffle(allQuestions);
   let html = "";
-  allQuestions.forEach(q=>{
-    html += `<button onclick="checkAnswer('${q.word}')">${q.word}</button>`;
+  choices.forEach(q=>{
+    html += `<button class="choice" onclick="checkAnswer(this,'${q.word}')">${displayText(q)}</button>`;
   });
   document.getElementById("choices").innerHTML = html;
+  document.getElementById("result").innerText = "";
+  document.getElementById("rank").innerText = "";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("playBtn").style.display = "inline-block";
+}
+
+function renderChoices(){
+  let buttons = document.querySelectorAll(".choice");
+  buttons.forEach(btn=>{
+    let word = btn.innerText.split("（")[0];
+    let q = allQuestions.find(o=>o.word===word);
+    if(q) btn.innerText = displayText(q);
+  });
 }
 
 function playAudio(){
-  new Audio(audioMap[current.word]).play();
+  let btn = document.getElementById("playBtn");
+  btn.classList.add("playing");
+  btn.innerText = "🔊 再生中...";
+  let audio = new Audio(audioMap[current.word]);
+  audio.play();
+  audio.onended = () => {
+    btn.classList.remove("playing");
+    btn.innerText = "▶ 音声を再生";
+  };
 }
 
-function checkAnswer(selected){
+function checkAnswer(button, selected){
+  let buttons = document.querySelectorAll(".choice");
+  buttons.forEach(btn=>{
+    btn.disabled = true;
+    if(btn.innerText.includes(current.word)) btn.classList.add("correct");
+    else if(btn===button) btn.classList.add("wrong");
+  });
+
   if(selected===current.word) correctCount++;
-  showQuestion();
+  let pinyinText = `（${current.pinyin}）`;
+  document.getElementById("result").innerText =
+    selected===current.word ? `✅ 正解！${document.getElementById("togglePinyin").checked ? pinyinText : ""}`
+                            : `❌ 不正解！正解は「${current.word}${pinyinText}」`;
+
+  document.getElementById("nextBtn").style.display = "block";
 }
 
 function nextQuestion(){ showQuestion(); }
 
-// ===== ⭐ここだけ変更 =====
 function showResult(){
-
-  const rank = document.getElementById("rank");
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("playBtn").style.display = "none";
+  document.getElementById("progress").innerText = "";
+  document.getElementById("toggleContainer").style.display = "none";
+  document.getElementById("homeBtn").style.display = "block";
 
   const rankNames = [
-    "ひよっこ",
-    "初心者",
-    "初心者",
-    "初級",
-    "中級",
-    "上級",
-    "見習い",
-    "熟練",
-    "特級",
-    "プロ",
+    "ひよっこshijianプレイヤー",
+    "shijian当て初心者",
+    "shijian当て初心者",
+    "shijian当て初級者",
+    "shijian当て中級者",
+    "shijian当て上級者",
+    "見習いshijian鑑定士",
+    "熟練したshijian鑑定士",
+    "特級shijian鑑定士",
+    "プロshijian当て職人",
     "レジェンドshijian当てer"
   ];
 
-  document.getElementById("result").innerText =
-    `10問中 ${correctCount} 問正解！`;
+  document.getElementById("result").style.fontSize = "24px";
+  document.getElementById("result").innerText = `🎉 遊んでくれてありがとう‼️\n10問中 ${correctCount} 問正解！`;
 
+  const rank = document.getElementById("rank");
   rank.innerText = rankNames[correctCount];
-
-  // ===== 10点だけ演出 =====
-  if(correctCount === 10){
-
-    if(Math.random() < 0.95){
-      // 🎉 紙吹雪
-      for(let i=0;i<100;i++){
-        let c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random()*100+"vw";
-        c.style.background = `hsl(${Math.random()*360},100%,50%)`;
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),3000);
-      }
-
-    } else {
-      // 🌈 MEMZ
-      document.body.classList.add("rainbowMode");
-      rank.classList.add("legendSpin");
-    }
-  }
-
-  document.getElementById("homeBtn").style.display = "block";
+  rank.style.color = "#e91e63";
+  rank.style.fontSize = "28px";
+  rank.style.fontWeight = "bold";
 }
 </script>
 
 </body>
 </html>
+
