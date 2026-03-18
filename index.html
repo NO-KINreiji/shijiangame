@@ -156,40 +156,6 @@ button:active {
     padding: 14px;
   }
 }
-
-  /* 虹背景 */
-.rainbowBg {
-  animation: rainbow 1s linear infinite;
-}
-
-@keyframes rainbow {
-  0% { background: red; }
-  20% { background: yellow; }
-  40% { background: lime; }
-  60% { background: cyan; }
-  80% { background: blue; }
-  100% { background: magenta; }
-}
-
-/* 回転テキスト */
-.spinText {
-  display: inline-block;
-  font-weight: bold;
-  animation: spinCrazy 1s linear infinite;
-}
-
-@keyframes spinCrazy {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.5);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
-}
-  
 </style>
 </head>
 
@@ -359,40 +325,36 @@ function checkAnswer(button, selected){
 
 function nextQuestion(){ showQuestion(); }
 
+function showResult(){
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("playBtn").style.display = "none";
+  document.getElementById("progress").innerText = "";
+  document.getElementById("toggleContainer").style.display = "none";
+  document.getElementById("homeBtn").style.display = "block";
 
-  if(correctCount === 10){
+  const rankNames = [
+    "ひよっこshijianプレイヤー",
+    "shijian当て初心者",
+    "shijian当て初心者",
+    "shijian当て初級者",
+    "shijian当て中級者",
+    "shijian当て上級者",
+    "見習いshijian鑑定士",
+    "熟練したshijian鑑定士",
+    "特級shijian鑑定士",
+    "プロshijian当て職人",
+    "レジェンドshijian当てer"
+  ];
 
-  // ランダム分岐（0〜1）
-  let rand = Math.random();
+  document.getElementById("result").style.fontSize = "24px";
+  document.getElementById("result").innerText = `🎉 遊んでくれてありがとう‼️\n10問中 ${correctCount} 問正解！`;
 
-  if(rand < 0.95){
-    // ===== 95%：紙吹雪 =====
-    document.getElementById("result").innerHTML =
-      `🎊 PERFECT!! 🎊<br>レジェンドshijian当てer`;
-
-    // 紙吹雪
-    for(let i=0;i<100;i++){
-      let confetti = document.createElement("div");
-      confetti.className = "confetti";
-      confetti.style.left = Math.random()*100 + "vw";
-      confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
-      confetti.style.animationDuration = (Math.random()*2+2)+"s";
-      document.body.appendChild(confetti);
-      setTimeout(()=>confetti.remove(),4000);
-    }
-
-  } else {
-    // ===== 5%：MEMZモード =====
-    document.body.classList.add("rainbowBg");
-
-    let rank = document.getElementById("rank");
-    rank.innerHTML = "レジェンドshijian当てer";
-    rank.classList.add("spinText");
-    rank.style.fontSize = "40px";
-
-    document.getElementById("result").innerHTML =
-      "😈 覚醒モード突入 😈";
-  }
+  const rank = document.getElementById("rank");
+  rank.innerText = rankNames[correctCount];
+  rank.style.color = "#e91e63";
+  rank.style.fontSize = "28px";
+  rank.style.fontWeight = "bold";
 }
 </script>
 
